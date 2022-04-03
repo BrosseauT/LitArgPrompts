@@ -17,15 +17,7 @@ import { Switch, FormGroup, FormControlLabel } from '@mui/material';
   };
   
   componentDidMount() {
-    let allTmp = [];
-        firebase.database().ref("/").on("value", snapshot => {
-
-      snapshot.forEach(snap => {
-        allTmp.push(`${snap.ref.key}: ${snap.val()}`);      
-      });
-      
-    });
-    this.setState({ localprompts: allTmp, databaselength: allTmp.length });
+    this.populateLocalDB(); 
     this.saveDB();
   };
 
@@ -60,13 +52,15 @@ import { Switch, FormGroup, FormControlLabel } from '@mui/material';
 
   populateLocalDB() {
     let allTmp = [];
+    var count = 0;
     firebase.database().ref("/").on("value", (snapshot) => {
-      snapshot.forEach((snap) => {
-          allTmp.push(`${snap.ref.key}: ${snap.val()}`);  
-        });      
-      });
-    this.setState({ localprompts: allTmp });
-    this.saveDB();
+    snapshot.forEach((snap) => {
+        allTmp.push(`${snap.ref.key}: ${snap.val()}`);  
+        count++;
+      });      
+      this.setState({ localprompts: allTmp, databaselength: count });
+      this.saveDB();
+    });
   };
     
     generatePrompt = () => {
@@ -75,7 +69,7 @@ import { Switch, FormGroup, FormControlLabel } from '@mui/material';
         this.deleteItem(this.state.activeprompt);
       } else {
         this.setState({
-          activeprompt: this.state.localprompts[rand]
+          activeprompt: this.state.localprompts[rand],
         });
       }
     };
@@ -128,6 +122,7 @@ import { Switch, FormGroup, FormControlLabel } from '@mui/material';
     }
 
   render() {
+    console.log(this.state.databaselength);
     return (
     <div className="App">
      <h1>Literary Argument Prompt Generator</h1>
@@ -168,7 +163,7 @@ import { Switch, FormGroup, FormControlLabel } from '@mui/material';
           </div>
         : null
       }
-      { (this.state.localprompts.length !== this.state.databaselength)
+      { (this.state.localprompts.length !== this.state.databaselength || this.state.databaselength === 0)
           ?  <div
           style={{
             marginTop: '16px',
