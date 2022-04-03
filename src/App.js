@@ -12,6 +12,7 @@ import { Switch, FormGroup, FormControlLabel } from '@mui/material';
       activepromptdate: '',
       checked: false,
       lastprompt: '',
+      databaselength: 0
     }
   };
   
@@ -24,7 +25,7 @@ import { Switch, FormGroup, FormControlLabel } from '@mui/material';
       });
       
     });
-    this.setState({ localprompts: allTmp });
+    this.setState({ localprompts: allTmp, databaselength: allTmp.length });
     this.saveDB();
   };
 
@@ -103,7 +104,7 @@ import { Switch, FormGroup, FormControlLabel } from '@mui/material';
 
     renderContent() {
       if (this.state.localprompts === [] || ( this.state.activeprompt === undefined && this.state.localprompts.length === 0 )) {
-        return (<div className="prompt"> Hi! So ya broke it huh? No worries, let's go ahead and reset the database and start fresh :).</div>);
+        return (<div className="prompt"> You've run through all prompts, reset the database to start over!</div>);
       } 
       if (this.state.activeprompt !== '' && this.state.localprompts !== [] && this.state.activeprompt !== undefined) {
         return (<div className="prompt">
@@ -112,9 +113,9 @@ import { Switch, FormGroup, FormControlLabel } from '@mui/material';
       } else {
         return (<div className="placeholdertext">
         <span>
-          <h3>This page can be used to generate a random Literary Argument prompt from previous College Board AP Literature exams. </h3> <br />
-          A full list of prompts can be found <a href="https://docs.google.com/document/d/1H1Q8N5WpAG7sgtCROOYMcOrmRFZR4EkxoDT_MRQLPWU/edit?usp=sharing">here</a>. Alternatively, they can be found on the College Board Website <a href='https://apcentral.collegeboard.org/courses/ap-english-literature-and-composition/exam/past-exam-questions?course=ap-english-literature-and-composition'>here</a>. <br />
-          This website has no official affiliation with College Board. They own all the rights to all of this, I just made it for fun. 
+          <h3>This page can be used to generate a random Literary Argument (Q3) prompt from previous College Board AP Literature exams. </h3> <br />
+          A full list of literary argument (Q3) prompts can be found <a href="https://docs.google.com/document/d/1H1Q8N5WpAG7sgtCROOYMcOrmRFZR4EkxoDT_MRQLPWU/edit?usp=sharing">here</a>. Alternatively, they can be found on the College Board Website <a href='https://apcentral.collegeboard.org/courses/ap-english-literature-and-composition/exam/past-exam-questions?course=ap-english-literature-and-composition'>here</a>. <br />
+          This website has no official affiliation with College Board. They own all the rights to this content; I just made it for fun. 
         </span>
         </div>);
       }
@@ -132,9 +133,11 @@ import { Switch, FormGroup, FormControlLabel } from '@mui/material';
      <h1>Literary Argument Prompt Generator</h1>
     {this.renderContent()}
     <div className="generatewrapper">
-      <button type="submit" style={{ marginRight: '35px', height: '32px'}} onClick={() => this.generatePrompt()}> Generate a Random Prompt </button> <br /> <br />
+      <button type="submit" style={{ height: '32px'}} onClick={() => this.generatePrompt()}> Generate a Random Prompt </button> <br /> <br />
       { (this.state.activeprompt !== '') 
-      ? <FormGroup>
+      ? <FormGroup
+          style={{  marginLeft:'35px' }}
+        >
           <FormControlLabel
             control={
               <Switch             
@@ -165,22 +168,26 @@ import { Switch, FormGroup, FormControlLabel } from '@mui/material';
           </div>
         : null
       }
-    <div
-      style={{
-        marginTop: '16px',
-        height: '32px',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center'
-      }} 
-    >
-      <button
-        type="submit"
-        onClick={() => {
-          this.resetDB();
-        }
-      }> Reset Database </button>
-    </div>
+      { (this.state.localprompts.length !== this.state.databaselength)
+          ?  <div
+          style={{
+            marginTop: '16px',
+            height: '32px',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center'
+          }} 
+        >
+          <button
+            type="submit"
+            onClick={() => {
+              this.resetDB();
+            }
+          }> Reset Database </button>
+        </div>
+          : null
+      }
+   
    </div>
   )
 }
